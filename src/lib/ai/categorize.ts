@@ -27,20 +27,7 @@ export async function categorizeTransaction(
     };
   }
 
-  // Layer 2: Personal Learning DB (user's past corrections)
-  if (userId) {
-    const personalRule = await getPersonalRule(userId, merchant);
-    if (personalRule) {
-      return {
-        category: personalRule.category.name,
-        subcategory: personalRule.category.name, // TODO: Add subcategory to merchant rules
-        confidence: 95,
-        source: 'personal'
-      };
-    }
-  }
-
-  // Layer 3: OpenAI GPT-4o (for unknown merchants)
+  // Layer 2: OpenAI GPT-4o (for unknown merchants)
   try {
     const aiResult = await categorizeWithAI([{ merchant, amount }]);
     if (aiResult.length > 0) {
@@ -111,20 +98,6 @@ Respond ONLY with a JSON array:
   return result.results || [];
 }
 
-async function getPersonalRule(_userId: string, _merchant: string) {
-  // No persistent database – always fall back to rules / AI.
-  return null;
-}
-
-export async function learnFromCorrection(
-  userId: string,
-  merchant: string,
-  categoryId: string
-) {
-  // No-op without a real database.
-  return;
-}
-
 export async function batchCategorize(
   transactions: { merchant: string; amount: number }[],
   userId?: string
@@ -144,20 +117,6 @@ export async function batchCategorize(
         source: 'rule'
       };
       continue;
-    }
-
-    // Try personal learning
-    if (userId) {
-      const personalRule = await getPersonalRule(userId, transaction.merchant);
-      if (personalRule) {
-        results[i] = {
-          category: personalRule.category.name,
-          subcategory: personalRule.category.name,
-          confidence: 95,
-          source: 'personal'
-        };
-        continue;
-      }
     }
 
     // Add to AI batch
