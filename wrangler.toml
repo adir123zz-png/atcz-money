@@ -1,5 +1,5 @@
 name = "atcz-money"
-compatibility_date = "2024-09-23"
+compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
 
 # Cloudflare KV Namespaces
@@ -23,3 +23,7 @@ crons = ["0 6 1 * *"]    # Monthly summary: 1st of month at 06:00 UTC
 [vars]
 ENVIRONMENT = "production"
 NEXT_PUBLIC_APP_URL = "https://app.atcz-money.com"
+
+[pages]
+project_name = "atcz-money"
+pages_build_output_dir = ".vercel/output/static"
