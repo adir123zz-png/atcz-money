@@ -5,16 +5,21 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-const adapter =
-  typeof process !== 'undefined' && process.env.DATABASE_URL
-    ? new PrismaPg({ connectionString: process.env.DATABASE_URL })
-    : undefined
+// Always provide an adapter so Prisma's "client" engine type
+// has either an adapter or accelerateUrl, even during build.
+// In environments without DATABASE_URL, this uses a dummy local URL
+// which is only relevant if code actually tries to hit the DB.
+const connectionString =
+  (typeof process !== 'undefined' && process.env.DATABASE_URL) ||
+  'postgresql://postgres:postgres@localhost:5432/postgres'
+
+const adapter = new PrismaPg({ connectionString })
 
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
     log: ['query'],
-    ...(adapter ? { adapter } : {}),
+    adapter,
   })
 
 if (typeof window === 'undefined' && process.env.NODE_ENV !== 'production') {
