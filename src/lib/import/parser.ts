@@ -1,27 +1,6 @@
 import * as XLSX from 'xlsx';
 import { DetectionResult, ParsedTransaction } from '@/types/import';
 
-export interface DetectionResult {
-  provider: string;
-  confidence: number;
-  dateColumn: string;
-  merchantColumn: string;
-  amountColumn: string;
-  currencyColumn?: string;
-  dateFormat: string;
-  currency: string;
-  rowCount: number;
-  dateRange: { from: Date; to: Date };
-}
-
-export interface ParsedTransaction {
-  date: Date;
-  merchant: string;
-  amount: number;
-  currency: string;
-  originalData: any;
-}
-
 export async function parseImportFile(file: File): Promise<ParsedTransaction[]> {
   const ext = file.name.split('.').pop()?.toLowerCase();
   
@@ -44,7 +23,7 @@ async function parseExcel(file: File): Promise<ParsedTransaction[]> {
   ) || workbook.SheetNames[0];
   
   const worksheet = workbook.Sheets[sheetName];
-  const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+  const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
   
   return parseDataToTransactions(data);
 }

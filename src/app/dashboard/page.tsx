@@ -105,10 +105,10 @@ export default function Dashboard() {
         { month: 'ינו', income: 18500, expenses: 12340 }
       ],
       budgets: [
-        { name: 'מזון', spent: 3200, budget: 4000, percent: 80, status: 'good' },
-        { name: 'תחבורה', spent: 1800, budget: 2000, percent: 90, status: 'warning' },
-        { name: 'בילויים', spent: 1200, budget: 1200, percent: 100, status: 'danger' }
-      ],
+        { name: 'מזון', spent: 3200, budget: 4000, percent: 80, status: 'good' as const },
+        { name: 'תחבורה', spent: 1800, budget: 2000, percent: 90, status: 'warning' as const },
+        { name: 'בילויים', spent: 1200, budget: 1200, percent: 100, status: 'danger' as const }
+      ] as BudgetProgress[],
       transactions: [
         { id: '1', date: '30/01', merchant: 'סונול תל אביב', amount: 306, category: 'תחבורה' },
         { id: '2', date: '26/01', merchant: 'שופרסל דיזנגוף', amount: 421, category: 'מזון' },
