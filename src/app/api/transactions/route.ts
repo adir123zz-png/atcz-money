@@ -1,9 +1,8 @@
-export const runtime = "nodejs";
+export const runtime = 'edge';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
 import { mockTransactions, mockCategories } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
@@ -82,25 +81,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create transaction
-    const transaction = await prisma.transaction.create({
-      data: {
-        userId: session.user.id,
-        date: new Date(date),
-        merchant,
-        originalMerchant: merchant,
-        amount: parseFloat(amount),
-        currency,
-        categoryId,
-        note,
-        isRecurring,
-        accountId
-      },
-      include: {
-        category: true,
-        account: true
-      }
-    });
+    // No real database – create an in-memory-style transaction object
+    const transaction = {
+      id: `temp-${Date.now()}`,
+      userId: session.user.id,
+      date: new Date(date),
+      merchant,
+      originalMerchant: merchant,
+      amount: parseFloat(amount),
+      currency,
+      categoryId,
+      note,
+      isRecurring,
+      accountId,
+      category: null,
+      account: null,
+    };
 
     return NextResponse.json(transaction, { status: 201 });
   } catch (error) {

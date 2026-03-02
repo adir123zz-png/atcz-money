@@ -1,8 +1,7 @@
-export const runtime = "nodejs";
+export const runtime = 'edge';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
 import { parseImportFile, detectProvider } from '@/lib/import/parser';
 import { batchCategorize } from '@/lib/ai/categorize';
@@ -68,19 +67,18 @@ export async function POST(request: NextRequest) {
       };
     });
 
-    // Create import record
-    const importRecord = await prisma.import.create({
-      data: {
-        userId: session.user.id,
-        filename: file.name,
-        provider: detection.provider,
-        status: 'done',
-        rowsTotal: transactions.length,
-        rowsSuccess: transactions.length,
-        rowsDuplicate: 0,
-        rowsError: 0
-      }
-    });
+    // No real database yet – return a synthetic import record
+    const importRecord = {
+      id: `temp-import-${Date.now()}`,
+      userId: session.user.id,
+      filename: file.name,
+      provider: detection.provider,
+      status: 'done',
+      rowsTotal: transactions.length,
+      rowsSuccess: transactions.length,
+      rowsDuplicate: 0,
+      rowsError: 0,
+    };
 
     return NextResponse.json({
       importId: importRecord.id,

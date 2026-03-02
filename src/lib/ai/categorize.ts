@@ -1,6 +1,5 @@
 import OpenAI from 'openai';
 import { categorizeByRules } from './rules';
-import { prisma } from '../prisma';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const openai = OPENAI_API_KEY
@@ -112,21 +111,9 @@ Respond ONLY with a JSON array:
   return result.results || [];
 }
 
-async function getPersonalRule(userId: string, merchant: string) {
-  const rule = await prisma.merchantRule.findFirst({
-    where: {
-      userId,
-      pattern: {
-        contains: merchant,
-        mode: 'insensitive'
-      }
-    },
-    include: {
-      category: true
-    }
-  });
-
-  return rule;
+async function getPersonalRule(_userId: string, _merchant: string) {
+  // No persistent database – always fall back to rules / AI.
+  return null;
 }
 
 export async function learnFromCorrection(
@@ -134,30 +121,8 @@ export async function learnFromCorrection(
   merchant: string,
   categoryId: string
 ) {
-  // Save to merchant_rules table
-  await prisma.merchantRule.upsert({
-    where: {
-      userId_pattern: {
-        userId,
-        pattern: merchant
-      }
-    },
-    update: {
-      categoryId,
-      usageCount: {
-        increment: 1
-      }
-    },
-    create: {
-      userId,
-      pattern: merchant,
-      categoryId,
-      isRegex: false
-    }
-  });
-
-  // TODO: Cache in Cloudflare KV
-  // await env.ATCZ_CACHE.put(`rule:${userId}:${merchant}`, categoryId, { expirationTtl: 2592000 });
+  // No-op without a real database.
+  return;
 }
 
 export async function batchCategorize(

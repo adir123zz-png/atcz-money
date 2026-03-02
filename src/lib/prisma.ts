@@ -1,22 +1,7 @@
-import { PrismaClient } from '@prisma/client/edge'
-import { withAccelerate } from '@prisma/extension-accelerate'
-
-// We intentionally keep the global prisma type loose, because
-// the extended client type from withAccelerate is complex.
-const globalForPrisma = globalThis as unknown as {
-  prisma: any
-}
-
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    // This must be set to your Prisma Accelerate URL (prisma://...)
-    accelerateUrl: process.env.PRISMA_ACCELERATE_URL,
-  }).$extends(withAccelerate())
-
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma
-}
+// In-memory mock layer instead of a real database.
+// `prisma` is kept as `any` so existing imports keep working,
+// but it does not talk to a real database.
+export const prisma: any = null;
 
 // Mock data for development without database
 export const mockTransactions = [
