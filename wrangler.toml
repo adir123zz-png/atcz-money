@@ -1,0 +1,25 @@
+name = "atcz-money"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Cloudflare KV Namespaces
+[[kv_namespaces]]
+binding = "ATCZ_CACHE"
+id = "your-kv-namespace-id"
+
+[[kv_namespaces]]
+binding = "ATCZ_SESSIONS"
+id = "your-sessions-namespace-id"
+
+# Cloudflare R2 Bucket
+[[r2_buckets]]
+binding = "ATCZ_STORAGE"
+bucket_name = "atcz-money-imports"
+
+# Cron Triggers
+[[triggers.crons]]
+crons = ["0 6 1 * *"]    # Monthly summary: 1st of month at 06:00 UTC
+
+[vars]
+ENVIRONMENT = "production"
+NEXT_PUBLIC_APP_URL = "https://app.atcz-money.com"
