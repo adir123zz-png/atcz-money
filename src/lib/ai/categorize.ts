@@ -2,9 +2,10 @@ import OpenAI from 'openai';
 import { categorizeByRules } from './rules';
 import { prisma } from '../prisma';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const openai = OPENAI_API_KEY
+  ? new OpenAI({ apiKey: OPENAI_API_KEY })
+  : null;
 
 export interface CategorizationResult {
   category: string;
@@ -63,6 +64,10 @@ export async function categorizeTransaction(
 }
 
 export async function categorizeWithAI(transactions: { merchant: string; amount: number }[]) {
+  // If no OpenAI API key is configured, skip AI and fall back gracefully
+  if (!openai) {
+    return [];
+  }
   const prompt = `
 You are a financial transaction categorizer for Israeli users.
 Categorize each transaction into: category + subcategory + confidence (0-100).
