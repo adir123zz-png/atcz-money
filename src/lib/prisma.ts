@@ -1,8 +1,10 @@
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 
+// We intentionally keep the global prisma type loose, because
+// the extended client type from withAccelerate is complex.
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
+  prisma: any
 }
 
 export const prisma =
