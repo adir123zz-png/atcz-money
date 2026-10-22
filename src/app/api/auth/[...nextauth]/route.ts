@@ -1,12 +1,3 @@
-export const runtime = 'edge';
+import { handlers } from "@/lib/auth";
 
-import { NextResponse } from 'next/server';
-
-export async function GET() {
-  return NextResponse.json(
-    { error: 'Auth is disabled in this Cloudflare demo deployment.' },
-    { status: 501 }
-  );
-}
-
-export const POST = GET;
+export const { GET, POST } = handlers;

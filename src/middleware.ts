@@ -15,8 +15,11 @@ export const config = {
 
 export async function middleware(request: NextRequest) {
   // 1. Get token from cookie or Authorization header
-  const token = 
+  const token =
+    request.cookies.get('authjs.session-token')?.value ||
+    request.cookies.get('__Secure-authjs.session-token')?.value ||
     request.cookies.get('next-auth.session-token')?.value ||
+    request.cookies.get('__Secure-next-auth.session-token')?.value ||
     request.headers.get('Authorization')?.replace('Bearer ', '');
 
   if (!token) {
